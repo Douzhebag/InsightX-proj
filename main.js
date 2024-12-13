@@ -36,13 +36,22 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', handleScroll);
     handleScroll();
     
-    const scrollLinks = document.querySelectorAll('.submenu .submenu-item, .sub-service, .btn-primary[aria-label="ติดต่อเรา"]');
+    const scrollLinks = document.querySelectorAll(`
+        .submenu .submenu-item, 
+        .sub-service, 
+        .btn-primary[aria-label="ติดต่อเรา"],
+        .nav-link a[href="#section"],
+        #cta-btn
+    `);
     
     scrollLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             
-            if (this.getAttribute('aria-label') === 'ติดต่อเรา') {
+            // เช็คว่าเป็นลิงก์ที่ต้องการให้ scroll ไปที่ form หรือไม่
+            if (this.getAttribute('aria-label') === 'ติดต่อเรา' || 
+                this.getAttribute('aria-label') === 'ปรึกษาฟรี' || 
+                this.matches('.nav-link a[href="#section"]')) {
                 const formInput = document.querySelector('.form-input');
                 if (formInput) {
                     formInput.scrollIntoView({
@@ -53,14 +62,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            const targetId = this.getAttribute('href').substring(1);
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            // สำหรับลิงก์อื่นๆ ที่ต้องการ scroll ไปยัง section ที่ระบุ
+            const targetId = this.getAttribute('href')?.substring(1);
+            if (targetId) {
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             }
         });
     });
